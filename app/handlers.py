@@ -81,8 +81,8 @@ async def handle_answer(callback: CallbackQuery) -> None:
         state.incorrect_queue.append(q_index)
         correct_text = question.options[question.correct]
         await callback.message.answer(
-            f"Неверно. Верный ответ: {question.correct}) {correct_text}. "
-            f"Твой счёт: {state.score}\nНе сдавайся, попробуем ещё раз!"
+            f"Неверно.\nВерный ответ: {question.correct}) {correct_text}.\n"
+            f"Твой счёт: {state.score}"
         )
 
     milestone_text = milestone_message(state.score, state)
