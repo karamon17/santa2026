@@ -4,7 +4,7 @@ from aiogram import Bot
 
 from .config import get_settings
 from .content import INSPIRATION, PARKING_TIPS, QUESTIONS, SAFETY_TIPS
-from .keyboards import build_answer_keyboard
+from .keyboards import build_answer_keyboard, build_restart_keyboard
 from .models import QuizQuestion, UserState
 
 
@@ -55,6 +55,13 @@ def progress_bar(score: int, target_score: int) -> str:
 async def send_question(bot: Bot, chat_id: int, state: UserState) -> None:
     q_index = next_question_index(state)
     if q_index is None:
+        state.active_question = None
+        if state.postgame:
+            await bot.send_message(
+                chat_id=chat_id,
+                text="Все вопросы кончились. Спасибо за игру!",
+                reply_markup=build_restart_keyboard(),
+            )
         return
     state.active_question = q_index
     question = QUESTIONS[q_index]

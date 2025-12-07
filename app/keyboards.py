@@ -27,3 +27,9 @@ def build_finish_keyboard(remaining: int) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="Начать сначала", callback_data="start_quiz")],
         ]
     )
+
+
+def build_restart_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[InlineKeyboardButton(text="Начать сначала", callback_data="start_quiz")]]
+    )
