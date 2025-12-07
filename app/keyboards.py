@@ -13,3 +13,17 @@ def build_start_keyboard(callback: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[[InlineKeyboardButton(text="🚀 Поехали", callback_data=callback)]]
     )
+
+
+def build_finish_keyboard(remaining: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=f"Ты можешь ответить на оставшиеся {remaining} вопросов",
+                    callback_data="continue_remaining",
+                )
+            ],
+            [InlineKeyboardButton(text="Начать сначала", callback_data="start_quiz")],
+        ]
+    )

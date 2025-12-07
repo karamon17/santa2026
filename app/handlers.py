@@ -4,8 +4,13 @@ from aiogram.types import CallbackQuery, Message
 
 from .config import get_settings
 from .content import INTRO_MESSAGE, QUESTIONS, RULES_MESSAGE
-from .keyboards import build_start_keyboard
-from .quiz import milestone_message, progress_bar, send_question
+from .keyboards import build_finish_keyboard, build_start_keyboard
+from .quiz import (
+    milestone_message,
+    progress_bar,
+    remaining_questions_count,
+    send_question,
+)
 from .state import get_state
 
 router = Router()
@@ -22,6 +27,7 @@ async def handle_start(message: Message) -> None:
     state.sent_parking = False
     state.sent_inspiration = False
     state.finished = False
+    state.postgame = False
 
     await message.answer(INTRO_MESSAGE, reply_markup=build_start_keyboard("quiz_rules"))
 
@@ -43,6 +49,7 @@ async def handle_start_quiz(callback: CallbackQuery) -> None:
     state.sent_parking = False
     state.sent_inspiration = False
     state.finished = False
+    state.postgame = False
 
     await callback.message.answer("Поехали! Первый вопрос:")
     await send_question(callback.bot, callback.message.chat.id, state)
@@ -91,13 +98,33 @@ async def handle_answer(callback: CallbackQuery) -> None:
 
     if state.score >= settings.target_score:
         state.finished = True
+        remaining = remaining_questions_count(state)
         await callback.message.answer(
             "Поздравляю! Ты набрала 15 баллов! Вот вдохновляющие фразы, "
             "которые помогут тебе чувствовать себя уверенно за рулём. "
-            "Теперь можно открывать подарок от тайного Санты!"
+            "Теперь можно открывать подарок от тайного Санты!",
+            reply_markup=build_finish_keyboard(remaining),
         )
         await callback.answer()
         return
 
+    await send_question(callback.bot, callback.message.chat.id, state)
+    await callback.answer()
+
+
+@router.callback_query(F.data == "continue_remaining")
+async def handle_continue_remaining(callback: CallbackQuery) -> None:
+    state = get_state(callback.from_user.id)
+    remaining = remaining_questions_count(state)
+
+    if remaining == 0:
+        await callback.answer("Все вопросы уже пройдены!", show_alert=True)
+        return
+
+    state.finished = False
+    state.postgame = True
+    await callback.message.answer(
+        f"Супер! Осталось вопросов: {remaining}. Давай закончим игру!"
+    )
     await send_question(callback.bot, callback.message.chat.id, state)
     await callback.answer()
