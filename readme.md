@@ -16,8 +16,8 @@
 
 ## Требования
 - Python 3.11+
-- Telegram Bot API токен в переменной окружения `TELEGRAM_TOKEN`.
-- (Опционально) публичный URL вебхука в `WEBHOOK_URL`.
+- Telegram Bot API токен в переменной окружения `TELEGRAM_TOKEN` или в файле `.env`.
+- (Опционально) настройте `TARGET_SCORE` в `.env`, если хотите изменить цель по баллам.
 
 Установите зависимости:
 
@@ -30,9 +30,9 @@ pip install -r requirements.txt
 ## Запуск через вебхук
 1. Поднимите приложение:
    ```bash
-   export TELEGRAM_TOKEN="<ваш_токен>"
-   export WEBHOOK_URL="https://<ваш-домен>/webhook"
-   uvicorn main:app --host 0.0.0.0 --port 8000
+cp .env .env.local  # создайте приватную копию и заполните TELEGRAM_TOKEN
+source .env.local
+uvicorn app.server:app --host 0.0.0.0 --port 8000
    ```
 2. В BotFather укажите вебхук на `https://<ваш-домен>/webhook` (совпадает с `WEBHOOK_URL`).
 
@@ -40,7 +40,7 @@ pip install -r requirements.txt
 Для отладки без вебхука запустите:
 
 ```bash
-export TELEGRAM_TOKEN="<ваш_токен>"
+source .env.local
 python main.py
 ```
 
