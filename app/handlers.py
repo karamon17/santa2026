@@ -82,13 +82,13 @@ async def handle_answer(callback: CallbackQuery) -> None:
     if state.postgame:
         if chosen == question.correct:
             await callback.message.answer(
-                "Верно! Баллы больше не считаются — ты уже прошла игру."
+                "Верно!"
             )
         else:
             state.incorrect_queue.append(q_index)
             correct_text = question.options[question.correct]
             await callback.message.answer(
-                "Неверно. Баллы больше не считаются — ты уже прошла игру.\n"
+                "Неверно.\n"
                 f"Верный ответ: {question.correct}) {correct_text}."
             )
 
