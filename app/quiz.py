@@ -26,9 +26,15 @@ def milestone_message(score: int, state: UserState) -> Optional[str]:
     return None
 
 
+def remaining_questions_count(state: UserState) -> int:
+    remaining_indices = set(range(state.current_index, len(QUESTIONS)))
+    remaining_indices.update(state.incorrect_queue)
+    return len(remaining_indices)
+
+
 def next_question_index(state: UserState) -> Optional[int]:
     target_score = get_settings().target_score
-    if state.score >= target_score:
+    if state.score >= target_score and not state.postgame:
         return None
     if state.current_index < len(QUESTIONS):
         idx = state.current_index

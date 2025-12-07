@@ -19,3 +19,4 @@ class UserState:
     sent_parking: bool = False
     sent_inspiration: bool = False
     finished: bool = False
+    postgame: bool = False
